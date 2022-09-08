@@ -1,0 +1,93 @@
+﻿@page "/Deletes/deleteTicket/{Id:guid}"
+
+
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<style>
+    .box1 {
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+        margin-top: 5%;
+    }
+    .box3 {
+        margin-left: -25%;
+        margin-top: 1%;
+    }
+
+    .box2 {
+        padding: 10%;
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+    }
+</style>
+
+<div class="box1">
+    <h3>Are you sure you want to delete this todo</h3>
+</div>
+<div class="box3">
+
+    <p>
+        <a class="btn btn-primary" href="/Views/viewTickets">Back</a>
+
+    </p>
+
+
+</div>
+
+
+<div class="box2 ">
+
+
+
+    <h4>Title</h4>
+
+    <p>@ticket.TicketName</p>
+
+    <h4>Description</h4>
+    <p>@ticket.Description</p>
+
+    <button class="btn btn-primary" @onclick="deleteTickets">Delete</button>
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    private Ticket ticket { get; set; } = new Ticket();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ticket = await Http.GetFromJsonAsync<Ticket>($"api/Ticket/{Id}");
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+    private async void deleteTickets()
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"/api/Ticket/{ticket.Id}");
+            response.EnsureSuccessStatusCode();
+            Navigation.NavigateTo("/Views/viewTickets");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+}

@@ -1,0 +1,88 @@
+﻿@page "/Details/detailsTicket/{TicketID:guid}"
+
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+<style>
+    .box1 {
+        padding-left: 50%;
+        border: ridge;
+        margin-top: 5%;
+        margin-left: -25%;
+    }
+    .box3{
+        margin-left:-25%;
+        margin-top:1%;
+    }
+
+    .box2 {
+        padding: 10%;
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+    }
+</style>
+
+<div class="box1">
+    <h3>Ticket Details</h3>
+</div>
+
+<div class="box3">
+
+    <p>
+        <a class="btn btn-primary" href="/Views/viewTickets">Back</a>
+
+    </p>
+</div>
+
+<div class="box2">
+    <h4>Title</h4>
+    <p>
+        @ticket.TicketName
+    </p>
+    <h4>Assigned project</h4>
+    <p>
+        @foreach (var project in projects)
+            {
+            @project.ProjectName
+            }
+
+        </p>
+    <h4>Description</h4>
+    <p>
+        @ticket.Description
+    </p>
+</div>
+
+@code {
+    public Guid ProjectID { get; set; }
+
+
+    [Parameter]
+    public Guid TicketID { get; set; }
+
+    private List<Project> projects = new List<Project>();
+
+    private Ticket ticket { get; set; } = new Ticket();
+
+    private AssignTicket assignTicket { get; set; } = new AssignTicket();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ticket = await httpClient.GetFromJsonAsync<Ticket>($"api/Ticket/{TicketID}");
+            assignTicket = await httpClient.GetFromJsonAsync<AssignTicket>($"/api/AssignTicket/{TicketID}");
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+}

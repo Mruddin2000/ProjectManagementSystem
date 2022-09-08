@@ -1,0 +1,100 @@
+﻿@page "/Edits/editCompany/{Id:guid}"
+
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+<style>
+    .box1 {
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+    }
+
+    .box3 {
+        margin-left: -25%;
+        margin-top: 1%;
+    }
+
+    .box2 {
+        padding: 10%;
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+    }
+</style>
+
+<div class="box1">
+    <h3>Edit your Company</h3>
+</div>
+
+
+<div class="box3">
+
+    <p>
+        <a class="btn btn-primary" href="/viewCompanies">Back</a>
+
+    </p>
+
+
+</div>
+
+<div class="box2">
+    <EditForm Model="company" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label class="control-label">Name</label>
+            <InputText @bind-Value="company.CompanyName"></InputText>
+            <ValidationMessage For="@(()=>company.CompanyName)" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Description</label>
+            <InputText @bind-Value="company.Description"></InputText>
+            <ValidationMessage For="@(()=>company.Description)" />
+
+
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+    </EditForm>
+</div>
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    private Company company { get; set; } = new Company();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            company = await httpClient.GetFromJsonAsync<Company>($"api/Company/{Id}");
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    private async void HandleValidSubmit()
+    {
+        try
+        {
+            var response = await httpClient.PutAsJsonAsync($"/api/Company/{company.Id}", company);
+            response.EnsureSuccessStatusCode();
+            Navigation.NavigateTo("/viewCompanies");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+}

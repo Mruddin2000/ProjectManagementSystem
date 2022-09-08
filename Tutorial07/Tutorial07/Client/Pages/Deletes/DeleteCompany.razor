@@ -1,0 +1,91 @@
+﻿@page "/Deletes/deleteCompany/{Id:guid}"
+
+
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<style>
+    .box1 {
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+        margin-top: 5%;
+    }
+    .box3 {
+        margin-left: -25%;
+        margin-top: 1%;
+    }
+    .box2 {
+        padding: 10%;
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+    }
+</style>
+
+<div class="box1">
+    <h3>Are you sure you want to delete this todo</h3>
+</div>
+
+<div class="box3">
+
+    <p>
+        <a class="btn btn-primary" href="/viewCompanies">Back</a>
+
+    </p>
+
+
+</div>
+
+<div class="box2 ">
+
+
+
+    <h4>Title</h4>
+    <p>@company.CompanyName</p>
+
+    <h4>Description</h4>
+    <p>@company.Description</p>
+
+    <button class="btn btn-primary" @onclick="delete">Delete</button>
+</div>
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    private Company company { get; set; } = new Company();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            company = await Http.GetFromJsonAsync<Company>($"api/Company/{Id}");
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+    private async void delete()
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"/api/Company/{company.Id}");
+            response.EnsureSuccessStatusCode();
+            Navigation.NavigateTo("/viewCompanies");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+}
+

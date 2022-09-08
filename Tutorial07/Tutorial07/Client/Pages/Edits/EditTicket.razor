@@ -1,0 +1,172 @@
+﻿@page "/Edits/editTicket/{TicketID:guid}"
+
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+<style>
+    .box1 {
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+    }
+
+    .box3 {
+        margin-left: -25%;
+        margin-top: 1%;
+    }
+
+    .box2 {
+        padding: 10%;
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+    }
+
+    .assign {
+        margin-left: -65%;
+        margin-top: 5%;
+    }
+
+        .assign .btn-primary {
+            margin-top: 5%;
+            margin-left: 45%;
+        }
+</style>
+
+
+<div class="box1">
+    <h3>Edit your Tickets</h3>
+</div>
+
+
+<div class="box3">
+
+    <p>
+        <a class="btn btn-primary" href="/Views/viewTickets">Back</a>
+
+    </p>
+
+
+</div>
+
+<div class="box2">
+    <EditForm Model="ticket" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label class="control-label">Name</label>
+            <InputText @bind-Value="ticket.TicketName"></InputText>
+            <ValidationMessage For="@(()=>ticket.TicketName)" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Description</label>
+            <InputText @bind-Value="ticket.Description"></InputText>
+            <ValidationMessage For="@(()=>ticket.Description)" />
+
+
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+
+    </EditForm>
+
+    <div class="assign">
+
+        <select class="custom-select" @bind="@ProjectID" title="Select Project">
+            <option value="Select" selected disabled="disabled">(select project)</option>
+
+            @foreach (var project in projects)
+            {
+
+                <option value="@project.Id">@project.ProjectName</option>
+            }
+
+        </select>
+
+      
+        <button class="btn btn-primary" @onclick="assignTickets">Assign</button>
+    </div>
+    </div>
+    @code {
+        public Guid ProjectID { get; set; }
+
+
+        [Parameter]
+        public Guid TicketID { get; set; }
+
+
+        private Ticket ticket { get; set; } = new Ticket();
+
+        private List<Project>
+            projects = new List<Project>
+                ();
+        private AssignTicket assignTicket { get; set; } = new AssignTicket();
+
+
+        protected override async Task OnInitializedAsync()
+        {
+            try
+            {
+                ticket = await httpClient.GetFromJsonAsync<Ticket>
+                               ($"api/Ticket/{TicketID}");
+                projects = await httpClient.GetFromJsonAsync<List<Project>>($"api/Project/");
+
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        private async void HandleValidSubmit()
+        {
+            try
+            {
+                var response = await httpClient.PutAsJsonAsync($"/api/Ticket/{ticket.Id}", ticket);
+                response.EnsureSuccessStatusCode();
+                Navigation.NavigateTo("/Views/viewTickets");
+
+
+            }
+
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+            catch (Exception e)
+            {
+
+            }
+
+        }
+        private async void assignTickets()
+        {
+            assignTicket.TicketID = TicketID;
+            assignTicket.ProjectID = ProjectID;
+
+            try
+            {
+                var response = await httpClient.PostAsJsonAsync($"api/AssignTicket", assignTicket);
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync();
+                var aT = JsonConvert.DeserializeObject<AssignTicket>(content);
+                Navigation.NavigateTo("/Views/viewProjects");
+
+
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+    }

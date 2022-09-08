@@ -1,0 +1,72 @@
+﻿@page "/"
+<link rel="stylesheet" href="~/css/StyleSheet.css" />
+@inject NavigationManager Navigation
+
+<style>
+
+    .hbox {
+        border: ridge;
+        margin-left: -155px;
+        margin-right: 200px;
+        text-align: center;
+    }
+
+    .container {
+        border: ridge;
+        margin-left: -13%;
+        margin-top: 5%;
+        padding: 15%;
+        padding-left: 26%;
+    }
+
+    .box1 {
+        margin-left: -35%;
+        width: 150%;
+        border: ridge;
+        border-radius: 10px;
+        height: 100px;
+        margin-top: 0%;
+    }
+
+
+    .btn-primary {
+        width: 48.5%;
+        font-size: 42px;
+        float: left;
+        border: outset;
+        margin-left: 1%;
+        margin-top: -1%;
+        border-radius: 15px;
+    }
+</style>
+<div class="hbox">
+    <h3>Welcome to Project Management Application</h3>
+</div>
+
+<div class="container">
+    <div class="box1">
+        <p></p>
+        <p>
+            <button class="btn btn-primary" @onclick="CreateTickets">
+                Get Started
+            </button>
+        </p>
+        <p>
+            <button class="btn btn-primary" @onclick="ExistingProject">
+                View Exisiting Project
+            </button>
+        </p>
+    </div>
+</div>
+
+@code{
+
+    public void CreateTickets()
+    {
+        Navigation.NavigateTo("/Creates/CreateTickets");
+    }
+    public void ExistingProject()
+    {
+        Navigation.NavigateTo("/ExistingProject");
+    }
+}

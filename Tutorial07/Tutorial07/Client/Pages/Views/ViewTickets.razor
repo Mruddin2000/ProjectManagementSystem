@@ -1,0 +1,75 @@
+﻿
+@page "/Views/viewTickets"
+
+@inject HttpClient Http
+
+<h3> View Tickets </h3>
+
+
+<div class="box1">
+ 
+    <p>
+        <a class="btn btn-primary" href="/ExistingProject">Dashboard</a>
+
+    </p>
+   
+   
+</div>
+
+    <div class="table-responsive">
+
+
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Ticket</th>
+                    <th>Description</th>
+                    <th>Edit & Assign</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticket in Tickets)
+                {
+                    <tr>
+                        <td>
+                            @ticket.TicketName
+                        </td>
+                        <td>
+                            <a href="/Details/detailsTicket/@ticket.Id">Details</a>
+                        </td>
+                        <td>
+                            <a href="/Edits/editTicket/@ticket.Id">Edit</a>
+
+                        </td>
+                        <td>
+                            <a href="/Deletes/deleteTicket/@ticket.Id">Delete</a>
+                        </td>
+                    
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+
+
+
+    @code {
+
+        private List<Ticket> Tickets = new List<Ticket>();
+
+        protected override async Task OnInitializedAsync()
+        {
+
+            try
+            {
+                Tickets = await Http.GetFromJsonAsync<List<Ticket>>("api/Ticket");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+    }

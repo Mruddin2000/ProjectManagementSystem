@@ -1,0 +1,166 @@
+﻿@page "/Edits/editProject/{ProjectID:guid}"
+
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+<style>
+    .box1 {
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+    }
+
+    .box3 {
+        margin-left: -25%;
+        margin-top: 1%;
+    }
+
+    .box2 {
+        padding: 10%;
+        padding-left: 50%;
+        border: ridge;
+        margin-left: -25%;
+    }
+
+    .assign {
+        margin-left: -65%;
+        margin-top: 5%;
+    }
+
+        .assign .btn-primary {
+            margin-top: 5%;
+            margin-left:45%;
+        }
+</style>
+
+<div class="box1">
+    <h3>Edit Your Projects</h3>
+</div>
+
+
+<div class="box3">
+
+    <p>
+        <a class="btn btn-primary" href="/Views/viewProjects">Back</a>
+
+    </p>
+
+
+</div>
+
+<div class="box2">
+    <EditForm Model="project" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label class="control-label">Name</label>
+            <InputText @bind-Value="project.ProjectName"></InputText>
+            <ValidationMessage For="@(()=>project.ProjectName)" />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Description</label>
+            <InputText @bind-Value="project.Description"></InputText>
+            <ValidationMessage For="@(()=> project.Description)" />
+
+
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+    </EditForm>
+    <div class="assign">
+
+
+        <select class="custom-select" @bind="@CompanyID" title="Select Project">
+            <option value="Select" selected disabled="disabled">(select project)</option>
+
+            @foreach (var companies in company)
+            {
+
+                <option value="@companies.Id">@companies.CompanyName</option>
+            }
+
+        </select>
+
+        <button class="btn btn-primary" @onclick="assignCompany">Assign</button>
+    </div>
+</div>
+@code {
+    public Guid CompanyID { get; set; }
+
+
+    [Parameter]
+    public Guid ProjectID { get; set; }
+
+
+    private Project project { get; set; } = new Project();
+
+    private List<Company>
+        company = new List<Company>
+            ();
+    private AssignCompany assignCompanys{ get; set; } = new AssignCompany();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            project = await httpClient.GetFromJsonAsync<Project>($"api/Project/{ProjectID}");
+
+            company = await httpClient.GetFromJsonAsync<List<Company>>($"api/Company/");
+
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    private async void HandleValidSubmit()
+    {
+        try
+        {
+            var response = await httpClient.PutAsJsonAsync($"/api/Project/{project.Id}", project);
+            response.EnsureSuccessStatusCode();
+            Navigation.NavigateTo("/Views/viewProjects");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    private async void assignCompany()
+    {
+        assignCompanys.ProjectID = ProjectID;
+        assignCompanys.CompanyID = CompanyID;
+
+
+        try
+        {
+            var response = await httpClient.PostAsJsonAsync($"api/AssignCompany", assignCompanys);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var aT = JsonConvert.DeserializeObject<AssignTicket>(content);
+            Navigation.NavigateTo("/Views/viewProjects");
+
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+}

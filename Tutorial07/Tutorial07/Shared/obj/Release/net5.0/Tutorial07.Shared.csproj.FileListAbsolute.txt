@@ -1,0 +1,12 @@
+A:\Tutorial07\Tutorial07\Shared\bin\Release\net5.0\Tutorial07.Shared.deps.json
+A:\Tutorial07\Tutorial07\Shared\bin\Release\net5.0\Tutorial07.Shared.dll
+A:\Tutorial07\Tutorial07\Shared\bin\Release\net5.0\ref\Tutorial07.Shared.dll
+A:\Tutorial07\Tutorial07\Shared\bin\Release\net5.0\Tutorial07.Shared.pdb
+A:\Tutorial07\Tutorial07\Shared\obj\Release\net5.0\Tutorial07.Shared.csproj.AssemblyReference.cache
+A:\Tutorial07\Tutorial07\Shared\obj\Release\net5.0\Tutorial07.Shared.GeneratedMSBuildEditorConfig.editorconfig
+A:\Tutorial07\Tutorial07\Shared\obj\Release\net5.0\Tutorial07.Shared.AssemblyInfoInputs.cache
+A:\Tutorial07\Tutorial07\Shared\obj\Release\net5.0\Tutorial07.Shared.AssemblyInfo.cs
+A:\Tutorial07\Tutorial07\Shared\obj\Release\net5.0\Tutorial07.Shared.csproj.CoreCompileInputs.cache
+A:\Tutorial07\Tutorial07\Shared\obj\Release\net5.0\Tutorial07.Shared.dll
+A:\Tutorial07\Tutorial07\Shared\obj\Release\net5.0\ref\Tutorial07.Shared.dll
+A:\Tutorial07\Tutorial07\Shared\obj\Release\net5.0\Tutorial07.Shared.pdb
